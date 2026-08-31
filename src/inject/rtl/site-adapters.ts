@@ -162,7 +162,7 @@ function isLayoutContainer(element: HTMLElement): boolean {
   return false
 }
 
-function detectDominantDirection(text: string): "ltr" | "rtl" | null {
+export function detectDominantDirection(text: string): "ltr" | "rtl" | null {
   const normalized = normalizeText(text)
   if (!normalized) return null
 
@@ -185,8 +185,8 @@ function detectDominantDirection(text: string): "ltr" | "rtl" | null {
   }
 
   if (!rtlCount && !ltrCount) return null
-  if (rtlCount === ltrCount) {
-    return firstStrong && isRtlCharacter(firstStrong) ? "rtl" : "ltr"
+  if (firstStrong && isRtlCharacter(firstStrong)) {
+    return "rtl"
   }
 
   return rtlCount > ltrCount ? "rtl" : "ltr"
@@ -514,7 +514,8 @@ function createGeminiAdapter(): RtlSiteAdapter {
   const messageSelectors = [
     '[data-test-id="luminous-collapsed-bubble"]',
     '[id^="model-response-message-content"]',
-    '[id^="model-user-message-content"]'
+    '[id^="model-user-message-content"]',
+    '[class*="elicitation"]'
   ]
   const uiExcludeSelectors = [
     '[data-test-id="overflow-container"]',
@@ -565,6 +566,8 @@ function createGeminiAdapter(): RtlSiteAdapter {
     "figcaption",
     "strong",
     "em",
+    "table",
+    "tr",
     "td",
     "th",
     "h1",
@@ -574,7 +577,10 @@ function createGeminiAdapter(): RtlSiteAdapter {
     "h5",
     "h6",
     ".query-text-line",
-    ".query-text"
+    ".query-text",
+    ".elicitations-message",
+    ".elicitation-item",
+    ".elicitation-label"
   ])
   const uiExclude = joinSelectors(uiExcludeSelectors)
   const codeGuard = joinSelectors(codeGuardSelectors)
@@ -643,36 +649,30 @@ function createGeminiAdapter(): RtlSiteAdapter {
           direction: rtl !important;
           text-align: right !important;
           list-style: none !important;
-          margin-inline-start: 0 !important;
-          margin-inline-end: 0 !important;
-          margin-left: 0 !important;
-          margin-right: 0 !important;
-          padding-inline-start: 0 !important;
-          padding-inline-end: 0 !important;
-          padding-left: 0 !important;
-          padding-right: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
         }
 
-        ${messageScope} :is(ul, ol)[dir="rtl"] > li {
+        ${messageScope} :is(ul, ol)[dir="rtl"] > li,
+        ${messageScope} :is(ul, ol) > li[dir="rtl"] {
           direction: rtl !important;
           text-align: right !important;
           list-style: none !important;
           position: relative !important;
-          padding-inline-start: 1.55rem !important;
-          padding-inline-end: 0 !important;
-          padding-left: 0 !important;
-          padding-right: 1.55rem !important;
+          padding: 0 1.55rem 0 0 !important;
         }
 
         ${messageScope} ol[dir="rtl"] {
           counter-reset: fontara-gemini-rtl-list;
         }
 
-        ${messageScope} ol[dir="rtl"] > li {
+        ${messageScope} ol[dir="rtl"] > li,
+        ${messageScope} ol > li[dir="rtl"] {
           counter-increment: fontara-gemini-rtl-list;
         }
 
-        ${messageScope} :is(ul, ol)[dir="rtl"] > li::before {
+        ${messageScope} :is(ul, ol)[dir="rtl"] > li::before,
+        ${messageScope} :is(ul, ol) > li[dir="rtl"]::before {
           display: block !important;
           position: absolute !important;
           right: 0 !important;
@@ -684,18 +684,43 @@ function createGeminiAdapter(): RtlSiteAdapter {
           direction: rtl !important;
         }
 
-        ${messageScope} ul[dir="rtl"] > li::before {
+        ${messageScope} ul[dir="rtl"] > li::before,
+        ${messageScope} ul > li[dir="rtl"]::before {
           content: "\\25E6" !important;
           width: 1rem !important;
         }
 
-        ${messageScope} ol[dir="rtl"] > li::before {
+        ${messageScope} ol[dir="rtl"] > li::before,
+        ${messageScope} ol > li[dir="rtl"]::before {
           content: counter(fontara-gemini-rtl-list) "." !important;
           width: 1.15rem !important;
         }
 
-        ${messageScope} [dir="rtl"] table {
-          direction: rtl;
+        ${messageScope} table[dir="rtl"],
+        ${messageScope} [dir="rtl"] table,
+        ${messageScope} table:has(th[dir="rtl"], td[dir="rtl"]) {
+          direction: rtl !important;
+          text-align: right !important;
+        }
+
+        ${messageScope} table[dir="rtl"] :is(th, td),
+        ${messageScope} table:has(th[dir="rtl"], td[dir="rtl"]) :is(th, td) {
+          text-align: right !important;
+        }
+
+        :is([dir="rtl"] .elicitations-message, .elicitations-message[dir="rtl"], [dir="rtl"] .elicitation-label, .elicitation-label[dir="rtl"]) {
+          direction: rtl !important;
+          text-align: right !important;
+          unicode-bidi: isolate;
+        }
+
+        :is([dir="rtl"] .elicitation-item, .elicitation-item[dir="rtl"]) {
+          direction: rtl !important;
+          text-align: right !important;
+        }
+
+        :is([dir="rtl"], [dir="rtl"] .elicitation-item, .elicitation-item[dir="rtl"]) .elicitation-button-icon {
+          transform: scaleX(-1);
         }
       `,
       "gemini"
