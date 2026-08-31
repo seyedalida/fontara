@@ -596,6 +596,10 @@ test("detectDominantDirection correctly identifies Persian lines with long Engli
     "rtl"
   )
   assert.equal(
+    detectDominantDirection("چرخه حیات و پایپلاین خودکار MLOps. Source: ML-Ops.org"),
+    "rtl"
+  )
+  assert.equal(
     detectDominantDirection("MLflow is an open source platform for machine learning"),
     "ltr"
   )

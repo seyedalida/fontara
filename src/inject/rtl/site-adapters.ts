@@ -580,7 +580,9 @@ function createGeminiAdapter(): RtlSiteAdapter {
     ".query-text",
     ".elicitations-message",
     ".elicitation-item",
-    ".elicitation-label"
+    ".elicitation-label",
+    ".caption",
+    ".hero-caption"
   ])
   const uiExclude = joinSelectors(uiExcludeSelectors)
   const codeGuard = joinSelectors(codeGuardSelectors)
@@ -708,13 +710,15 @@ function createGeminiAdapter(): RtlSiteAdapter {
           text-align: right !important;
         }
 
-        :is([dir="rtl"] .elicitations-message, .elicitations-message[dir="rtl"], [dir="rtl"] .elicitation-label, .elicitation-label[dir="rtl"]) {
+        :is(.elicitations-message, .elicitation-label, .caption, .hero-caption)[dir="rtl"],
+        [dir="rtl"] :is(.elicitations-message, .elicitation-label, .caption, .hero-caption) {
           direction: rtl !important;
           text-align: right !important;
           unicode-bidi: isolate;
         }
 
-        :is([dir="rtl"] .elicitation-item, .elicitation-item[dir="rtl"]) {
+        .elicitation-item[dir="rtl"],
+        [dir="rtl"] .elicitation-item {
           direction: rtl !important;
           text-align: right !important;
         }
