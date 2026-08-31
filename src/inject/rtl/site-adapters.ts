@@ -519,26 +519,18 @@ function createGeminiAdapter(): RtlSiteAdapter {
   ]
   const uiExcludeSelectors = [
     '[data-test-id="overflow-container"]',
-    '[data-test-id="overflow-container"] *',
     '[data-test-id="all-conversations"]',
-    '[data-test-id="all-conversations"] *',
     '[data-test-id="conversation"]',
     '[data-test-id="chats-expandable-section"]',
-    '[data-test-id="chats-expandable-section"] *',
     '[data-test-id="notebooks-expandable-section"]',
-    '[data-test-id="notebooks-expandable-section"] *',
     '[data-test-id="new-chat-button"]',
     '[data-test-id="search-chats-button"]',
     '[data-test-id="videos-side-nav-entry-button"]',
     '[data-test-id="my-stuff-side-nav-entry-button"]',
     "conversations-list",
-    "conversations-list *",
     "project-sidenav-list",
-    "project-sidenav-list *",
     "mat-nav-list[gem-sidenav-list]",
-    "mat-nav-list[gem-sidenav-list] *",
     ".gds-sidenav-list",
-    ".gds-sidenav-list *",
     "input",
     "textarea",
     '[contenteditable="true"]',
@@ -698,15 +690,12 @@ function createGeminiAdapter(): RtlSiteAdapter {
           width: 1.15rem !important;
         }
 
-        ${messageScope} table[dir="rtl"],
-        ${messageScope} [dir="rtl"] table,
-        ${messageScope} table:has(th[dir="rtl"], td[dir="rtl"]) {
+        ${messageScope} :is(table[dir="rtl"], [dir="rtl"] table, table:has(th[dir="rtl"], td[dir="rtl"])) {
           direction: rtl !important;
           text-align: right !important;
         }
 
-        ${messageScope} table[dir="rtl"] :is(th, td),
-        ${messageScope} table:has(th[dir="rtl"], td[dir="rtl"]) :is(th, td) {
+        ${messageScope} :is(table[dir="rtl"], table:has(th[dir="rtl"], td[dir="rtl"])) :is(th, td) {
           text-align: right !important;
         }
 
@@ -717,13 +706,20 @@ function createGeminiAdapter(): RtlSiteAdapter {
           unicode-bidi: isolate;
         }
 
+        :is(.caption, .hero-caption)[dir="rtl"] span,
+        [dir="rtl"] :is(.caption, .hero-caption) span {
+          unicode-bidi: isolate !important;
+          direction: ltr !important;
+          display: inline-block;
+        }
+
         .elicitation-item[dir="rtl"],
         [dir="rtl"] .elicitation-item {
           direction: rtl !important;
           text-align: right !important;
         }
 
-        :is([dir="rtl"], [dir="rtl"] .elicitation-item, .elicitation-item[dir="rtl"]) .elicitation-button-icon {
+        :is([dir="rtl"], .elicitation-item[dir="rtl"]) .elicitation-button-icon {
           transform: scaleX(-1);
         }
       `,
