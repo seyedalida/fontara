@@ -515,7 +515,9 @@ function createGeminiAdapter(): RtlSiteAdapter {
     '[data-test-id="luminous-collapsed-bubble"]',
     '[id^="model-response-message-content"]',
     '[id^="model-user-message-content"]',
-    '[class*="elicitation"]'
+    '[class*="elicitation"]',
+    "thought-item",
+    ".item-container"
   ]
   const uiExcludeSelectors = [
     '[data-test-id="overflow-container"]',
@@ -533,8 +535,6 @@ function createGeminiAdapter(): RtlSiteAdapter {
     ".gds-sidenav-list",
     "input",
     "textarea",
-    '[contenteditable="true"]',
-    '[contenteditable=""]',
     '[contenteditable]:not([contenteditable="false"])'
   ]
   const codeGuardSelectors = [
@@ -574,7 +574,9 @@ function createGeminiAdapter(): RtlSiteAdapter {
     ".elicitation-item",
     ".elicitation-label",
     ".caption",
-    ".hero-caption"
+    ".hero-caption",
+    ".thought-header",
+    '[data-test-id*="thought"]'
   ])
   const uiExclude = joinSelectors(uiExcludeSelectors)
   const codeGuard = joinSelectors(codeGuardSelectors)
@@ -647,8 +649,7 @@ function createGeminiAdapter(): RtlSiteAdapter {
           padding: 0 !important;
         }
 
-        ${messageScope} :is(ul, ol)[dir="rtl"] > li,
-        ${messageScope} :is(ul, ol) > li[dir="rtl"] {
+        ${messageScope} :is(ul, ol):is([dir="rtl"] > li, > li[dir="rtl"]) {
           direction: rtl !important;
           text-align: right !important;
           list-style: none !important;
@@ -660,13 +661,11 @@ function createGeminiAdapter(): RtlSiteAdapter {
           counter-reset: fontara-gemini-rtl-list;
         }
 
-        ${messageScope} ol[dir="rtl"] > li,
-        ${messageScope} ol > li[dir="rtl"] {
+        ${messageScope} ol:is([dir="rtl"] > li, > li[dir="rtl"]) {
           counter-increment: fontara-gemini-rtl-list;
         }
 
-        ${messageScope} :is(ul, ol)[dir="rtl"] > li::before,
-        ${messageScope} :is(ul, ol) > li[dir="rtl"]::before {
+        ${messageScope} :is(ul, ol):is([dir="rtl"] > li, > li[dir="rtl"])::before {
           display: block !important;
           position: absolute !important;
           right: 0 !important;
@@ -678,14 +677,12 @@ function createGeminiAdapter(): RtlSiteAdapter {
           direction: rtl !important;
         }
 
-        ${messageScope} ul[dir="rtl"] > li::before,
-        ${messageScope} ul > li[dir="rtl"]::before {
+        ${messageScope} ul:is([dir="rtl"] > li, > li[dir="rtl"])::before {
           content: "\\25E6" !important;
           width: 1rem !important;
         }
 
-        ${messageScope} ol[dir="rtl"] > li::before,
-        ${messageScope} ol > li[dir="rtl"]::before {
+        ${messageScope} ol:is([dir="rtl"] > li, > li[dir="rtl"])::before {
           content: counter(fontara-gemini-rtl-list) "." !important;
           width: 1.15rem !important;
         }
@@ -699,11 +696,15 @@ function createGeminiAdapter(): RtlSiteAdapter {
           text-align: right !important;
         }
 
-        :is(.elicitations-message, .elicitation-label, .caption, .hero-caption)[dir="rtl"],
-        [dir="rtl"] :is(.elicitations-message, .elicitation-label, .caption, .hero-caption) {
+        :is(.elicitations-message, .elicitation-label, .caption, .hero-caption, .thought-header, [data-test-id*="thought"])[dir="rtl"],
+        [dir="rtl"] :is(.elicitations-message, .elicitation-label, .caption, .hero-caption, .thought-header, [data-test-id*="thought"]) {
           direction: rtl !important;
           text-align: right !important;
           unicode-bidi: isolate;
+        }
+
+        :is([dir="rtl"] .item-container, .item-container[dir="rtl"]) {
+          direction: rtl !important;
         }
 
         :is(.caption, .hero-caption)[dir="rtl"] span,
